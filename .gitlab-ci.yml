@@ -1,0 +1,26 @@
+stages:
+  - build-image
+
+build-nextjs-app:
+  stage: build-image
+  image: docker:24.0.7
+  tags:
+    - docker
+  services:
+    - name: docker:dind
+      command: ["--dns=8.8.8.8", "--dns=1.1.1.1"]
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+  before_script:
+    - docker info
+  script:
+    - echo "Build Next.js Docker image"
+    - docker build -t $DOCKERHUB_USERNAME/nextjs-template:latest .
+    - echo "Login to Docker Hub"
+    - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+    - echo "Push to Docker Hub"
+    - docker push $DOCKERHUB_USERNAME/nextjs-template:latest
+  only:
+    - dev
