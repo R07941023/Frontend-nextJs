@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: nextjs-template
-          image: yenyinglu/nextjs-template:v1.0.2
+          image: yenyinglu/nextjs-template:v1.0.3
           ports:
             - containerPort: 3000

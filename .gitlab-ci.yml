@@ -5,6 +5,10 @@ stages:
 build-nextjs-app:
   stage: build-image
   image: docker:24.0.7
+  retry:
+    max: 2
+    when:
+      - always
   tags:
     - docker
   services:
@@ -14,7 +18,7 @@ build-nextjs-app:
     DOCKER_TLS_CERTDIR: ""
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
-    IMAGE_TAG: v1.0.2
+    IMAGE_TAG: v1.0.3
   before_script:
     - docker info
   script:
