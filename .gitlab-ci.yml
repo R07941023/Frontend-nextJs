@@ -14,7 +14,7 @@ build-nextjs-app:
     DOCKER_TLS_CERTDIR: ""
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
-    IMAGE_TAG: v1.0.0
+    IMAGE_TAG: v1.0.2
   before_script:
     - docker info
   script:
