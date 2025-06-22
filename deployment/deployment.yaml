@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextjs-template
+  labels:
+    app: nextjs-template
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nextjs-template
+  template:
+    metadata:
+      labels:
+        app: nextjs-template
+    spec:
+      containers:
+        - name: nextjs-template
+          image: yenyinglu/nextjs-template:v1.0.0
+          ports:
+            - containerPort: 3000

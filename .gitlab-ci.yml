@@ -1,5 +1,6 @@
 stages:
   - build-image
+  - deploy-kubernetes
 
 build-nextjs-app:
   stage: build-image
@@ -13,14 +14,28 @@ build-nextjs-app:
     DOCKER_TLS_CERTDIR: ""
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
+    IMAGE_TAG: v1.0.0
   before_script:
     - docker info
   script:
     - echo "Build Next.js Docker image"
-    - docker build -t $DOCKERHUB_USERNAME/nextjs-template:latest .
+    - docker build -t $DOCKERHUB_USERNAME/nextjs-template:$IMAGE_TAG .
     - echo "Login to Docker Hub"
     - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
     - echo "Push to Docker Hub"
-    - docker push $DOCKERHUB_USERNAME/nextjs-template:latest
+    - docker push $DOCKERHUB_USERNAME/nextjs-template:$IMAGE_TAG
   only:
     - dev
+
+sync-argocd-app:
+  stage: deploy-kubernetes
+  image: curlimages/curl:8.6.0
+  script:
+    - echo "Trigger Argo CD sync for nextjs-template"
+    - |
+      curl -X POST "$ARGOCD_SERVER/api/v1/applications/nextjs-template/sync" \
+        -H "Authorization: Bearer $ARGOCD_API_TOKEN" \
+        -H "Content-Type: application/json" \
+        -d '{"force": true}'
+  only:
+    - main
